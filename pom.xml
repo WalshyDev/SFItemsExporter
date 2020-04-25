@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <sfVersion>6d12b23fc1</sfVersion>
+        <sfVersion>f4c52505f3</sfVersion>
     </properties>
 
     <repositories>
