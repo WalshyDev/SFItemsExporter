@@ -41,7 +41,7 @@ public class SFExporter {
 
         System.out.println("\n\nLoaded in " + loaded + " items!");
 
-        try (FileWriter fw = new FileWriter(new File("output.json"))) {
+        try (FileWriter fw = new FileWriter(new File("items.json"))) {
             fw.write(root.toString());
             fw.flush();
         } catch (IOException e) {
