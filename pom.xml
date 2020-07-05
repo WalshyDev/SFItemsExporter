@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <sfVersion>f4c52505f3</sfVersion>
+        <sfVersion>b243f128de</sfVersion>
     </properties>
 
     <repositories>
@@ -27,15 +27,24 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
             <artifactId>Slimefun4</artifactId>
             <version>${sfVersion}</version>
-            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.seeseemelk</groupId>
+            <artifactId>MockBukkit</artifactId>
+            <version>v1.15-d952559324-1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.TheBusyBiscuit</groupId>
+            <artifactId>CS-CoreLib</artifactId>
+            <version>8081bb4fe4</version>
         </dependency>
     </dependencies>
 
