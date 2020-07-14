@@ -27,7 +27,7 @@ public class SFExporter {
         new SFExporter().exportItems();
     }
 
-    private void exportItems() {
+    public JsonArray loadSFItems() {
         final JsonArray root = new JsonArray();
 
         final ServerMock server = MockBukkit.mock();
@@ -36,10 +36,14 @@ public class SFExporter {
         registerDefaultTags(server);
 
         SlimefunItemSetup.setup(instance);
-
         int loaded = loadItems(root);
+        System.out.println("Loaded in " + loaded + " items!");
 
-        System.out.println("\n\nLoaded in " + loaded + " items!");
+        return root;
+    }
+
+    public void exportItems() {
+        final JsonArray root = loadSFItems();
 
         try (FileWriter fw = new FileWriter(new File("items.json"))) {
             fw.write(root.toString());
@@ -193,6 +197,10 @@ public class SFExporter {
     private JsonObject itemToJson(final ItemStack is) {
         JsonObject mcItem = new JsonObject();
         mcItem.addProperty("material", is.getType().toString());
+
+        if (is.getAmount() > 1)
+            mcItem.addProperty("amount", is.getAmount());
+
         final ItemMeta im = is.getItemMeta();
         if (im.hasDisplayName())
             mcItem.addProperty("name", im.getDisplayName().replace(ChatColor.COLOR_CHAR, '&'));

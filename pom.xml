@@ -9,7 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <sfVersion>b243f128de</sfVersion>
+        <!-- Just always grab latest -->
+        <sfVersion>-SNAPSHOT</sfVersion>
     </properties>
 
     <repositories>
