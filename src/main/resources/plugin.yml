@@ -1,7 +1,0 @@
-name: SFExporter
-author: Walshy
-version: 1.0
-api-version: 1.14
-description: Exporting SF items
-depend: [Slimefun]
-main: dev.walshy.sfitemexporter.SFExporter
