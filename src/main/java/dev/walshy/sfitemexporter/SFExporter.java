@@ -1,10 +1,18 @@
 package dev.walshy.sfitemexporter;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+
+import be.seeseemelk.mockbukkit.MockBukkit;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactive;
@@ -12,15 +20,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.ResearchSetup;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.SlimefunItemSetup;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class SFExporter {
 
@@ -31,10 +30,8 @@ public class SFExporter {
     public JsonArray loadSFItems() {
         final JsonArray root = new JsonArray();
 
-        final ServerMock server = MockBukkit.mock();
+        MockBukkit.mock();
         final SlimefunPlugin instance = MockBukkit.load(SlimefunPlugin.class);
-
-        registerDefaultTags(server);
 
         SlimefunItemSetup.setup(instance);
         ResearchSetup.setupResearches();
@@ -111,89 +108,6 @@ public class SFExporter {
             }
             itemObj.add("recipe", recipe);
         }
-    }
-
-    private void registerDefaultTags(ServerMock server) {
-        // We really don't need these to be accurate, just fill them with some examples
-        // that approximate the actual content
-        server.createMaterialTag(NamespacedKey.minecraft("logs"),
-            Material.OAK_LOG,
-            Material.STRIPPED_OAK_LOG,
-            Material.OAK_WOOD,
-            Material.STRIPPED_OAK_WOOD,
-            Material.ACACIA_LOG,
-            Material.STRIPPED_ACACIA_LOG,
-            Material.ACACIA_WOOD,
-            Material.STRIPPED_ACACIA_WOOD
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("wooden_trapdoors"),
-            Material.OAK_TRAPDOOR,
-            Material.BIRCH_TRAPDOOR,
-            Material.SPRUCE_TRAPDOOR,
-            Material.JUNGLE_TRAPDOOR,
-            Material.ACACIA_TRAPDOOR,
-            Material.DARK_OAK_TRAPDOOR
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("wooden_slabs"),
-            Material.OAK_SLAB,
-            Material.BIRCH_SLAB,
-            Material.JUNGLE_SLAB,
-            Material.SPRUCE_SLAB,
-            Material.ACACIA_SLAB,
-            Material.DARK_OAK_SLAB
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("wooden_fences"),
-            Material.OAK_FENCE,
-            Material.BIRCH_FENCE,
-            Material.JUNGLE_FENCE,
-            Material.SPRUCE_FENCE,
-            Material.ACACIA_FENCE,
-            Material.DARK_OAK_FENCE
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("planks"),
-            Material.OAK_PLANKS,
-            Material.BIRCH_PLANKS,
-            Material.SPRUCE_PLANKS,
-            Material.JUNGLE_PLANKS,
-            Material.ACACIA_PLANKS,
-            Material.DARK_OAK_PLANKS
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("small_flowers"),
-            Material.POPPY,
-            Material.DANDELION,
-            Material.AZURE_BLUET,
-            Material.LILY_OF_THE_VALLEY
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("leaves"),
-            Material.OAK_LEAVES,
-            Material.BIRCH_LEAVES,
-            Material.SPRUCE_LEAVES,
-            Material.JUNGLE_LEAVES,
-            Material.ACACIA_LEAVES,
-            Material.DARK_OAK_LEAVES
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("saplings"),
-            Material.OAK_SAPLING,
-            Material.BIRCH_SAPLING,
-            Material.SPRUCE_SAPLING,
-            Material.JUNGLE_SAPLING,
-            Material.ACACIA_SAPLING,
-            Material.DARK_OAK_SAPLING
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("coral_blocks"),
-            Material.BRAIN_CORAL_BLOCK,
-            Material.BUBBLE_CORAL_BLOCK,
-            Material.FIRE_CORAL_BLOCK,
-            Material.HORN_CORAL_BLOCK,
-            Material.TUBE_CORAL_BLOCK
-        );
-        server.createMaterialTag(NamespacedKey.minecraft("corals"),
-            Material.BRAIN_CORAL,
-            Material.BUBBLE_CORAL,
-            Material.FIRE_CORAL,
-            Material.HORN_CORAL,
-            Material.TUBE_CORAL
-        );
     }
 
     private JsonObject itemToJson(final ItemStack is) {
