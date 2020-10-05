@@ -3,6 +3,8 @@ package dev.walshy.sfitemexporter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
@@ -21,111 +23,172 @@ import io.github.thebusybiscuit.slimefun4.implementation.setup.ResearchSetup;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.SlimefunItemSetup;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 
+/**
+ * This is the main class for the "Slimefun Items Exporter",
+ * simply run the exported jar and it will generate an "items.json" file by default.
+ * 
+ * @author Walshy
+ * @author TheBusyBiscuit
+ *
+ */
 public class SFExporter {
 
+    private final Logger logger = Logger.getLogger("SlimefunItemsExporter");
+    private final JsonArray root = new JsonArray();
+
+    /**
+     * This is the main method of this software
+     * 
+     * @param args
+     *            Optional command line arguments
+     */
     public static void main(String[] args) {
-        new SFExporter().exportItems();
+        new SFExporter().exportItems(new File("items.json"));
     }
 
-    public JsonArray loadSFItems() {
-        final JsonArray root = new JsonArray();
+    /**
+     * This method loads all {@link SlimefunItem SlimefunItems} into a {@link JsonArray}.
+     * 
+     * @return A {@link JsonArray} with the data for every {@link SlimefunItem}
+     */
+    public JsonArray getAllSlimefunItems() {
+        if (MockBukkit.isMocked()) {
+            // We have already intiliazed all items, simply return the cached version
+            return root;
+        }
 
         MockBukkit.mock();
         final SlimefunPlugin instance = MockBukkit.load(SlimefunPlugin.class);
 
         SlimefunItemSetup.setup(instance);
         ResearchSetup.setupResearches();
-        int loaded = loadItems(root);
-        System.out.println("Loaded in " + loaded + " items!");
+        loadItems();
 
         return root;
     }
 
-    public void exportItems() {
-        final JsonArray root = loadSFItems();
+    /**
+     * This exports the generated json data to the specified output file.
+     * 
+     * @param file
+     *            The output {@link File}
+     */
+    public void exportItems(File file) {
+        final JsonArray items = getAllSlimefunItems();
 
-        try (FileWriter fw = new FileWriter(new File("items.json"))) {
-            fw.write(root.toString());
+        try (FileWriter fw = new FileWriter(file)) {
+            fw.write(items.toString());
             fw.flush();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private int loadItems(JsonArray root) {
-        int loaded = 0;
+    /**
+     * This loads all {@link SlimefunItem Slimefunitems} into the root {@link JsonArray}.
+     */
+    private void loadItems() {
+        int items = 0;
+
         for (SlimefunItem item : SlimefunPlugin.getRegistry().getAllSlimefunItems()) {
-            JsonObject itemObj = new JsonObject();
-            itemObj.addProperty("id", item.getID());
-            itemObj.add("item", itemToJson(item.getItem()));
-            itemObj.addProperty("category", item.getCategory().getUnlocalizedName());
-            itemObj.addProperty("categoryTier", item.getCategory().getTier());
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("id", item.getID());
+            jsonObj.add("item", getAsJson(item.getItem()));
+            jsonObj.addProperty("category", item.getCategory().getUnlocalizedName());
+            jsonObj.addProperty("categoryTier", item.getCategory().getTier());
 
             final JsonObject itemSettings = new JsonObject();
+
             for (ItemSetting<?> setting : item.getItemSettings()) {
                 itemSettings.addProperty(setting.getKey(), String.valueOf(setting.getDefaultValue()));
             }
-            itemObj.add("settings", itemSettings);
 
-            loadRecipe(item, itemObj);
+            jsonObj.add("settings", itemSettings);
+
+            loadRecipe(item, jsonObj);
 
             if (item.getResearch() != null) {
-                itemObj.addProperty("research", item.getResearch().getKey().toString());
-                itemObj.addProperty("researchCost", item.getResearch().getCost());
+                jsonObj.addProperty("research", item.getResearch().getKey().toString());
+                jsonObj.addProperty("researchCost", item.getResearch().getCost());
             }
-            itemObj.addProperty("useableInWorkbench", item.isUseableInWorkbench());
-            item.getWikipage().ifPresent(link -> itemObj.addProperty("wikiLink", link));
 
-            itemObj.addProperty("electric", item instanceof EnergyNetComponent);
+            jsonObj.addProperty("useableInWorkbench", item.isUseableInWorkbench());
+            item.getWikipage().ifPresent(link -> jsonObj.addProperty("wikiLink", link));
+
+            jsonObj.addProperty("electric", item instanceof EnergyNetComponent);
             if (item instanceof EnergyNetComponent) {
                 EnergyNetComponent component = (EnergyNetComponent) item;
-                itemObj.addProperty("electricType", component.getEnergyComponentType().toString());
-                itemObj.addProperty("electricCapacity", component.getCapacity());
+                jsonObj.addProperty("electricType", component.getEnergyComponentType().toString());
+                jsonObj.addProperty("electricCapacity", component.getCapacity());
             }
 
-            itemObj.addProperty("radioactive", item instanceof Radioactive);
-            if (item instanceof Radioactive)
-                itemObj.addProperty("radioactivityLevel",
-                    ((Radioactive) item).getRadioactivity().toString());
+            jsonObj.addProperty("radioactive", item instanceof Radioactive);
 
-            root.add(itemObj);
-            loaded++;
+            if (item instanceof Radioactive) {
+                jsonObj.addProperty("radioactivityLevel", ((Radioactive) item).getRadioactivity().toString());
+            }
+
+            root.add(jsonObj);
+            items++;
         }
 
-        return loaded;
+        logger.log(Level.INFO, "Loaded in {0} items!", items);
     }
 
-    private void loadRecipe(SlimefunItem item, JsonObject itemObj) {
+    /**
+     * This loads the recipe for this {@link SlimefunItem} into the specified {@link JsonObject}.
+     * 
+     * @param item
+     *            The {@link SlimefunItem}
+     * @param json
+     *            Our target {@link JsonObject}
+     */
+    private void loadRecipe(SlimefunItem item, JsonObject json) {
         if (item.getRecipeType() != null && item.getRecipe() != null) {
-            itemObj.addProperty("recipeType", item.getRecipeType().getKey().toString());
+            json.addProperty("recipeType", item.getRecipeType().getKey().toString());
 
             JsonArray recipe = new JsonArray();
             for (ItemStack is : item.getRecipe()) {
-                if (is != null)
-                    recipe.add(itemToJson(is));
-                else
+                if (is != null) {
+                    recipe.add(getAsJson(is));
+                }
+                else {
                     recipe.add(JsonNull.INSTANCE);
+                }
+
             }
-            itemObj.add("recipe", recipe);
+            json.add("recipe", recipe);
         }
     }
 
-    private JsonObject itemToJson(final ItemStack is) {
-        JsonObject mcItem = new JsonObject();
-        mcItem.addProperty("material", is.getType().toString());
+    /**
+     * This converts the given {@link ItemStack} into a {@link JsonObject}.
+     * 
+     * @param is
+     *            Our {@link ItemStack}.
+     * 
+     * @return The {@link JsonObject}-representation of this {@link ItemStack}
+     */
+    private JsonObject getAsJson(final ItemStack is) {
+        final JsonObject json = new JsonObject();
+        json.addProperty("material", is.getType().toString());
 
-        if (is.getAmount() > 1)
-            mcItem.addProperty("amount", is.getAmount());
+        if (is.getAmount() > 1) {
+            json.addProperty("amount", is.getAmount());
+        }
 
         final ItemMeta im = is.getItemMeta();
-        if (im.hasDisplayName())
-            mcItem.addProperty("name", im.getDisplayName().replace(ChatColor.COLOR_CHAR, '&'));
+        if (im.hasDisplayName()) {
+            json.addProperty("name", im.getDisplayName().replace(ChatColor.COLOR_CHAR, '&'));
+        }
 
-        JsonArray lore = new JsonArray();
-        if (im.hasLore())
+        final JsonArray lore = new JsonArray();
+        if (im.hasLore()) {
             im.getLore().stream().map(s -> s.replace(ChatColor.COLOR_CHAR, '&')).forEach(lore::add);
-        mcItem.add("lore", lore);
+        }
+        json.add("lore", lore);
 
-        return mcItem;
+        return json;
     }
 }
