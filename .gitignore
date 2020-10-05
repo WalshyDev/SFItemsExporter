@@ -1,7 +1,14 @@
 /.idea/
+/.settings/
+/bin/
 /target/
 /out/
 
 *.iml
+.classpath
+.project
+.DS_Store
+
 export.sh
 items.json
+dependency-reduced-pom.xml
