@@ -9,7 +9,6 @@
     <version>1.1-SNAPSHOT</version>
 
     <properties>
-        <!-- Just always grab latest -->
         <sfVersion>master-SNAPSHOT</sfVersion>
     </properties>
 
@@ -28,7 +27,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.3-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -40,18 +39,13 @@
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
             <artifactId>MockBukkit-v1.16</artifactId>
-            <version>0.10.2</version>
+            <version>0.22.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.bukkit</groupId>
                     <artifactId>bukkit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.github.TheBusyBiscuit</groupId>
-            <artifactId>CS-CoreLib</artifactId>
-            <version>8081bb4fe4</version>
         </dependency>
     </dependencies>
 
