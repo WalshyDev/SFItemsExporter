@@ -93,7 +93,7 @@ public class SFExporter {
 
         for (SlimefunItem item : SlimefunPlugin.getRegistry().getAllSlimefunItems()) {
             JsonObject jsonObj = new JsonObject();
-            jsonObj.addProperty("id", item.getID());
+            jsonObj.addProperty("id", item.getId());
             jsonObj.add("item", getAsJson(item.getItem()));
             jsonObj.addProperty("category", item.getCategory().getUnlocalizedName());
             jsonObj.addProperty("categoryTier", item.getCategory().getTier());
