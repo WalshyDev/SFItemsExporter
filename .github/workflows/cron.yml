@@ -2,7 +2,7 @@ name: Test item exporting
 on:
   workflow_dispatch:
   schedule:
-    - cron:  "0 * * * *"
+    - cron:  "0 0 * * *"
 
 jobs:
   test:
@@ -17,7 +17,7 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
       - name: Run it!
-        run: java -jar target/SFExporter.jar
+        run: java -jar target/SFItemsExporter.jar
       - name: 'It failed :( notify me'
         if: failure()
         run: 'curl -X POST -H "User-Agent: Mozilla/5.0 (github.com/WalshyDev/SFItemsExporter)" -H "Content-Type: application/json" -d ''{"content": "Failed to update SF items, a breaking update happened! Fix me pls"}'' ${{ secrets.DISCORD_WEBHOOK }}'
