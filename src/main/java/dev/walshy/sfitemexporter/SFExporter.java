@@ -1,20 +1,9 @@
 package dev.walshy.sfitemexporter;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
+import be.seeseemelk.mockbukkit.MockBukkit;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-
-import be.seeseemelk.mockbukkit.MockBukkit;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactive;
@@ -22,14 +11,22 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.ResearchSetup;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.SlimefunItemSetup;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is the main class for the "Slimefun Items Exporter",
  * simply run the exported jar and it will generate an "items.json" file by default.
- * 
+ *
  * @author Walshy
  * @author TheBusyBiscuit
- *
  */
 public class SFExporter {
 
@@ -38,9 +35,8 @@ public class SFExporter {
 
     /**
      * This is the main method of this software
-     * 
-     * @param args
-     *            Optional command line arguments
+     *
+     * @param args Optional command line arguments
      */
     public static void main(String[] args) {
         new SFExporter().exportItems(new File("items.json"));
@@ -48,7 +44,7 @@ public class SFExporter {
 
     /**
      * This method loads all {@link SlimefunItem SlimefunItems} into a {@link JsonArray}.
-     * 
+     *
      * @return A {@link JsonArray} with the data for every {@link SlimefunItem}
      */
     public JsonArray getAllSlimefunItems() {
@@ -69,9 +65,8 @@ public class SFExporter {
 
     /**
      * This exports the generated json data to the specified output file.
-     * 
-     * @param file
-     *            The output {@link File}
+     *
+     * @param file The output {@link File}
      */
     public void exportItems(File file) {
         final JsonArray items = getAllSlimefunItems();
@@ -79,8 +74,7 @@ public class SFExporter {
         try (FileWriter fw = new FileWriter(file)) {
             fw.write(items.toString());
             fw.flush();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -138,11 +132,9 @@ public class SFExporter {
 
     /**
      * This loads the recipe for this {@link SlimefunItem} into the specified {@link JsonObject}.
-     * 
-     * @param item
-     *            The {@link SlimefunItem}
-     * @param json
-     *            Our target {@link JsonObject}
+     *
+     * @param item The {@link SlimefunItem}
+     * @param json Our target {@link JsonObject}
      */
     private void loadRecipe(SlimefunItem item, JsonObject json) {
         if (item.getRecipeType() != null && item.getRecipe() != null) {
@@ -152,8 +144,7 @@ public class SFExporter {
             for (ItemStack is : item.getRecipe()) {
                 if (is != null) {
                     recipe.add(getAsJson(is));
-                }
-                else {
+                } else {
                     recipe.add(JsonNull.INSTANCE);
                 }
 
@@ -164,10 +155,8 @@ public class SFExporter {
 
     /**
      * This converts the given {@link ItemStack} into a {@link JsonObject}.
-     * 
-     * @param is
-     *            Our {@link ItemStack}.
-     * 
+     *
+     * @param is Our {@link ItemStack}.
      * @return The {@link JsonObject}-representation of this {@link ItemStack}
      */
     private JsonObject getAsJson(final ItemStack is) {
