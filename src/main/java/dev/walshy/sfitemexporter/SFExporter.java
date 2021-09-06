@@ -5,13 +5,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactive;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.PostSetup;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.ResearchSetup;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.SlimefunItemSetup;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -55,7 +55,7 @@ public class SFExporter {
         }
 
         MockBukkit.mock();
-        final SlimefunPlugin instance = MockBukkit.load(SlimefunPlugin.class);
+        final Slimefun instance = MockBukkit.load(Slimefun.class);
 
         SlimefunItemSetup.setup(instance);
         ResearchSetup.setupResearches();
@@ -87,12 +87,12 @@ public class SFExporter {
     private void loadItems() {
         int items = 0;
 
-        for (SlimefunItem item : SlimefunPlugin.getRegistry().getAllSlimefunItems()) {
+        for (SlimefunItem item : Slimefun.getRegistry().getAllSlimefunItems()) {
             JsonObject jsonObj = new JsonObject();
             jsonObj.addProperty("id", item.getId());
             jsonObj.add("item", getAsJson(item.getItem()));
-            jsonObj.addProperty("category", item.getCategory().getUnlocalizedName());
-            jsonObj.addProperty("categoryTier", item.getCategory().getTier());
+            jsonObj.addProperty("category", item.getItemGroup().getUnlocalizedName());
+            jsonObj.addProperty("categoryTier", item.getItemGroup().getTier());
 
             final JsonObject itemSettings = new JsonObject();
 
